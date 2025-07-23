@@ -1,0 +1,1 @@
+{"version":1,"defects":{"App\\Libraries\\astro\\hd\\HdTest::testHdrestult":5,"App\\Libraries\\astro\\sweph\\SwephTest::testSweph":3},"times":{"App\\Libraries\\astro\\hd\\HdTest::testHdrestult":0.008,"App\\Libraries\\astro\\sweph\\SwephTest::testSweph":0.013}}
