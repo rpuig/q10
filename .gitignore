@@ -3,7 +3,7 @@
 
 # Docker
 .env.docker
-docker-compose.override.yml
+docker-compose.yml
 
 # Data directories
 data/postgres/*
