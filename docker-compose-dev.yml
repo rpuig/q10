@@ -1,0 +1,80 @@
+
+services:
+  # PostgreSQL service
+  my-postgres:
+    image: postgres:17
+    container_name: my-postgres-ai
+    env_file:
+      - .env.dev
+    environment:
+      POSTGRES_USER: neo
+      POSTGRES_PASSWORD: neo
+      POSTGRES_DB: xgroups
+    ports:
+      - "1545:5432"
+    volumes:
+      - ./docker/data/postgres:/var/lib/postgresql/data
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    
+    
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.102.13
+
+  # PGAdmin service
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: my-pgadmin-ai
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    env_file:
+      - .env.dev
+    volumes:
+      - ./docker/data/pgadmin/:/var/lib/pgadmin  
+
+    ports:
+      - "8889:80"
+    depends_on:
+      - my-postgres
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.102.14
+
+  # Apache + PHP service
+  web:
+    build:
+      context: .
+      dockerfile: php-dockerfile
+    image: my-php-web:latest  
+    container_name: my-php-apache-ai
+    volumes:
+      - .:/var/www/html/q.local/      
+      - ./docker/config/apache/q.local.conf:/etc/apache2/sites-enabled/q.local.conf
+      - ./docker/config/ssl/:/etc/ssl/localcerts
+      - ./docker/config/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ./docker/config/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./app/Libraries/astro/sweph/swephp/ephe/:/users/ephe/
+      - ./app/Libraries/astro/sweph/swephp/ephe/:/users/ephe2/
+    ports:
+      - "8081:80" 
+      - "444:443"
+    depends_on:
+      - my-postgres
+    command: >
+      bash -c "a2enmod rewrite && a2enmod ssl && apache2-foreground"
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.102.15
+
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.102.0/24

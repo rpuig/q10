@@ -213,7 +213,7 @@
                         <div class="row">
                                 <div class="col">
                         <?php 
-                            echo form_input(['name' => 'timezone_txt', 'type' => 'text', 'class' => 'form-control', 'id' => 'timezone_txt', 'value' => $timezone, 'placeholder' => $timezone]); 
+                            echo form_input(['name' => 'timezone_display', 'type' => 'text', 'class' => 'form-control', 'id' => 'timezone', 'value' => $timezone, 'placeholder' => $timezone]); 
                               ?> 
                                                         
                         </div> 
@@ -245,7 +245,7 @@
                                                 id="visibilitycity" name="visibilitycity">
                                         </div>
                                         <?= form_hidden('value', 'city'); ?>
-                                        <?= form_input(['type'  => 'hidden','name'  => 'timezone','id' => 'timezone']); ?> 
+                                        <?= form_input(['type'  => 'hidden','name'  => 'timezone_txt','id' => 'timezone_txt']); ?> 
                                       
 
                                         </div>

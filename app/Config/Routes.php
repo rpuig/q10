@@ -57,8 +57,8 @@ $routes->group(
         $routes->get('AstroProfile', 'Astro\AstroController::index');
         $routes->post('AstroProfile', 'Astro\AstroController::index');
 
-        $routes->get('matches', 'Astro\MatchController::index');
-        $routes->post('matches', 'Astro\MatchController::index/$1');
+        $routes->get('current', 'Astro\MatchController::index');
+        $routes->post('current', 'Astro\MatchController::index/$1');
 
         $routes->get('settings', 'ProfileController::UserSettings');
         $routes->post('UpdateUserSettings', 'ProfileController::UpdateUserSettings');
@@ -101,8 +101,7 @@ $routes->group(
         $routes->post('validateLogin', 'UsersController::validateLogin');      
         $routes->post('updateProfilePic', 'ProfileController::uploadProfilePicture/$1');  
         $routes->post('updateBirthInfoProfile', 'ProfileController::updateBirthInfoProfile/$1');  
-        $routes->get('updateBirthInfoProfile/', 'ProfileController::updateBirthInfoProfile');        
-        
+        $routes->get('updateBirthInfoProfile/', 'ProfileController::updateBirthInfoProfile');         
         
         $routes->get('/', 'HomeController::index');
         $routes->get('home', 'HomeController::index');      

@@ -69,6 +69,7 @@ public function __construct($natal,$natal_88){
         $this->personality=$this->create_hex_prof($natal,"p");    
         $this->design=$this->create_hex_prof($natal_88,"d");  
 
+
        // $gates=$this->merge_gates($this->personality, $this->design); 
        // print_r("<br>");  
 
@@ -114,16 +115,17 @@ public function __construct($natal,$natal_88){
         //Index 10 =mean node, 11 true node , 20=Earth
 
         //Sun , Earth, North Node , Soth Node, Moon, Mercury, Venus, Mars, Jupiter , Saturn, Uranus, Neptune, Pluto 
-        
+    //   echo $this->debugPlanetsGateLines($this->planetData, false); // false = do not apply legacy +30
+    //          exit();
 
         foreach ($this->planetData as $index => $plData) {   
     
         $long=$plData["lng"];
         $sign=$plData["sign"];
         $body=$plData["name"];
-        $body=
-       // $indexes_planets[$index] =[$plData["name"], $this->getIndexesFromLongitude4($long,$sign,$flag)];    
-        $indexes_planets[$index] =[$plData["name"], $this->getGateAndLineFromLongitude($long,$body,$flag)];    
+        //$body= $indexes_planets[$index] =[$plData["name"], $this->getIndexesFromLongitude4($long,$sign,$flag)];    
+        $indexes_planets[$index] =[$plData["name"], $this->getGateAndLineFromLongitude_v3($long,$body,$flag)];    
+          $indexes_planets[$index] =[$plData["name"], $this->getGateAndLineFromLongitudeB($long,$body,$flag)];  
         }
 
         
@@ -139,6 +141,7 @@ public function __construct($natal,$natal_88){
             $this->shiftElementInArray($indexes_planets,20,11);
             $this->shiftElementInArray($indexes_planets,10,9);            
             $this->shiftElementInArray($indexes_planets,11,10);
+            
          return $indexes_planets;
     
     }
@@ -257,7 +260,7 @@ function northToSouthNode($northLongitude, $northSign) {
         'southSign'      => $southSign
     ];
 }
-function zodiacToAbbreviation($zodiac) {
+/* function zodiacToAbbreviation($zodiac) {
         $zodiacMap = [
             'Aries' => 'Ari',
             'Taurus' => 'Tau',
@@ -275,7 +278,7 @@ function zodiacToAbbreviation($zodiac) {
     
         return $zodiacMap[$zodiac] ?? null; // Returns null if the zodiac name is invalid
     }
-    
+     */
   
 function absoluteToRelative($absoluteLongitude) {
         // Normalize the absolute longitude to be within 0 and 360 degrees.
@@ -310,10 +313,88 @@ function relativeToAbsolute($zodiacIndex, $relativeDegrees) {
     
         return $absoluteLongitude;
     }
+
+
 function getGateAndLineFromLongitude($longitude, $body, $flag="p")
+{
+    $hex_wheel_new = hex_wheel; // your flat list of [gate, degree, sign] entries
+    if (empty($hex_wheel_new)) return [null, null];
+
+    // Normalize incoming longitude into 0..360
+    $longitude = fmod($longitude, 360);
+    if ($longitude < 0) $longitude += 360;
+
+    // Your original shift (you used +30)
+    $longitude += 30;
+    // Normalize again after the shift
+    $longitude = fmod($longitude, 360);
+    if ($longitude < 0) $longitude += 360;
+
+    // Special handling for Earth / Nodes (keep simplified: opposite point)
+    if ($body === "Earth" || $body === "True Node" || $body === "South Node") {
+        $longitude = fmod($longitude + 180, 360);
+        if ($longitude < 0) $longitude += 360;
+    }
+
+    // Work with zero-indexed sequential array for easier prev/next access
+    $entries = array_values($hex_wheel_new);
+    $count = count($entries);
+
+    // Iterate entries and find the first entry whose degree is greater than longitude
+    for ($i = 0; $i < $count; $i++) {
+        list($gate, $degree, $sign) = $entries[$i];
+
+        if ($longitude < $degree) {
+            // If this is not the first entry, compute based on previous entry span
+            if ($i > 0) {
+                list($prevGate, $prevDegree, $prevSign) = $entries[$i - 1];
+
+                // The nextDegree for prev gate is this entry's degree
+                $nextDegree = $degree;
+
+                $gateSpan = $nextDegree - $prevDegree;
+                if ($gateSpan <= 0) $gateSpan += 360; // safety
+
+                $lineSpan = $gateSpan / 6.0; // six lines
+                $line = intval(floor(($longitude - $prevDegree) / $lineSpan)) + 1;
+
+                // clamp line
+                $line = max(1, min(6, $line));
+
+                return [$prevGate, $line];
+            }
+
+            // If this is the first entry and longitude < first degree, return first gate line 1
+            return [$gate, 1];
+        }
+    }
+
+    // If we reach here, longitude was >= last entry degree -> handle wrap-around
+    // Use last entry as previous, and first entry degree + 360 as nextDegree
+    list($lastGate, $lastDegree, $lastSign) = $entries[$count - 1];
+    list($firstGate, $firstDegree, $firstSign) = $entries[0];
+
+    $nextDegree = $firstDegree + 360;
+    $gateSpan = $nextDegree - $lastDegree;
+    if ($gateSpan <= 0) $gateSpan += 360; // safety
+
+    $lineSpan = $gateSpan / 6.0;
+    // If longitude is less than firstDegree, we should treat it as longitude + 360 for wrap math
+    $wrappedLongitude = $longitude;
+    if ($wrappedLongitude < $lastDegree) {
+        $wrappedLongitude += 360;
+    }
+
+    $line = intval(floor(($wrappedLongitude - $lastDegree) / $lineSpan)) + 1;
+    $line = max(1, min(6, $line));
+
+    return [$lastGate, $line];
+}
+
+function getGateAndLineFromLongitudeB($longitude, $body, $flag="p")
     {
         $hex_wheel_new = hex_wheel; // Make sure this is accessible
-    
+        $line = 0;
         $previous = null;
         $longitude = $longitude + 30;
         if ($body == "Earth" || $body == "True Node" || $body== "South Node") {
@@ -327,7 +408,7 @@ function getGateAndLineFromLongitude($longitude, $body, $flag="p")
     
         foreach ($hex_wheel_new as $index => $entry) {
             list($gate, $degree, $sign) = $entry;
-    
+            
             if ($longitude < $degree) {
                 if ($previous) {
                     list($prevGate, $prevDegree, $prevSign) = $previous;
@@ -348,6 +429,7 @@ function getGateAndLineFromLongitude($longitude, $body, $flag="p")
                     $lineSpan = $gateSpan / 6.0; // 6 lines per gate
     
                     $line = intval(floor(($longitude - $prevDegree) / $lineSpan)) + 1;
+                    $linea[]=$line;
                     if ($line > 6) $line = 6; // Clamp to 6
                     if ($line < 1) $line = 1; // Clamp to 1
     
@@ -361,6 +443,305 @@ function getGateAndLineFromLongitude($longitude, $body, $flag="p")
             $previous = $entry;
         }
     }
+
+/*debugging*/
+
+/** Normalize into [0,360) */
+/* private function normalizeLon(float $lon): float {
+    $lon = fmod($lon, 360.0);
+    if ($lon < 0) $lon += 360.0;
+    return $lon;
+}
+ */
+
+/** Get sign name from absolute longitude (0..360). Returns full name like "Aries" */
+private function signFromLongitude(float $lon): string {
+    $signs = [
+        "Aries","Taurus","Gemini","Cancer",
+        "Leo","Virgo","Libra","Scorpio",
+        "Sagittarius","Capricorn","Aquarius","Pisces"
+    ];
+    $index = intval(floor($lon / 30.0)) % 12;
+    return $signs[$index];
+}
+
+/** Parse one of your hex_wheel subitems (handles both keyed and keyed-one-based arrays) */
+/* private function parseHexItem($item) {
+    $degree = null; $sign = null;
+    if (!is_array($item)) return [null, null];
+    foreach ($item as $v) {
+        if ($degree === null && (is_float($v) || is_int($v) || (is_string($v) && is_numeric($v)))) {
+            $degree = floatval($v);
+        } elseif ($sign === null && is_string($v)) {
+            $sign = $v;
+        }
+    }
+    return [$degree, $sign];
+}
+ */
+/**
+ * Compute gate & line.
+ *
+ * @param float  $absoluteLongitude absolute 0..360 (can be >360 or negative)
+ * @param string $body              e.g. "Sun", "Earth", "South Node", "True Node"
+ * @param bool   $applyShift        optional old +30 behaviour (default false)
+ * @return array [gateNumber|null, lineNumber|null, debugArray]
+ */
+public function computeGateLine(float $absoluteLongitude, string $body = 'Sun', bool $applyShift = false): array {
+    // 1) normalize
+    $lon = $this->normalizeLon($absoluteLongitude);
+
+    // 2) optional legacy shift (default OFF)
+    if ($applyShift) {
+        $lon = $this->normalizeLon($lon + 30.0);
+    }
+
+    // 3) Node/Earth inversion: opposite point
+    if (in_array($body, ["Earth", "South Node", "True Node"])) {
+        $lon = $this->normalizeLon($lon + 180.0);
+    }
+
+    // 4) derive sign and relative degree within sign [0..30)
+    $signName = $this->signFromLongitude($lon);
+    $signAbbr = $this->zodiacToAbbreviation($signName);
+    $relative = $lon - (floor($lon / 30.0) * 30.0);
+    // clamp float precision
+    if ($relative < 0) $relative += 30.0;
+    if ($relative >= 30.0) $relative = 29.9999999;
+
+    $debug = [
+        'input' => $absoluteLongitude,
+        'normalized' => $lon,
+        'sign' => $signName,
+        'signAbbr' => $signAbbr,
+        'relative' => $relative
+    ];
+
+    // 5) walk your hex_wheel (uses constant hex_wheel you showed earlier)
+    $hex_wheel = hex_wheel;
+    foreach ($hex_wheel as $gate => $signData) {
+        // does this gate belong to our sign? (search signAbbr in all subitems)
+        $belongs = false;
+        $anchors = [];
+        foreach ($signData as $item) {
+            list($d, $s) = $this->parseHexItem($item);
+            if ($s !== null && $s === $signAbbr) $belongs = true;
+            if ($d !== null) $anchors[] = floatval($d);
+        }
+        if (!$belongs) continue;
+        if (empty($anchors)) continue;
+
+        // Convert anchors to monotone "extended" scale within 0..30: if anchor drops (e.g., 28,29,0,0.9..)
+        $ext = [];
+        $prev = null;
+        foreach ($anchors as $d) {
+            $val = $d;
+            if ($prev !== null && $val < $prev - 1e-9) {
+                // treat small values (near 0) as 30+ to preserve order
+                if ($val < 1.0) $val += 30.0;
+            }
+            $ext[] = $val;
+            $prev = $val;
+        }
+        // build bounds: ext[0], ext[1], ..., ext[last], bound = ext[0] + 30
+        $extBound = $ext;
+        $extBound[] = $ext[0] + 30.0;
+
+        // Map relative into same extended scale for comparison
+        $relExt = $relative;
+        // if relExt < ext[0] and ext[0] is > ext[last], we may be in wrap zone -> add 30
+        if ($relExt < $ext[0] && $ext[count($ext)-1] > $ext[0]) {
+            // only add if it helps (common when anchor list crosses zero)
+            $relExt += 30.0;
+        }
+
+        // search interval i where extBound[i] <= relExt < extBound[i+1]
+        for ($i = 0; $i < count($ext); $i++) {
+            $start = $extBound[$i];
+            $end   = $extBound[$i+1];
+            $debug['candidate_' . $gate][] = ['start' => $start, 'end' => $end, 'line' => $i+1];
+            if ($relExt + 1e-9 >= $start && $relExt < $end - 1e-9) {
+                $line = $i + 1;
+                if ($line < 1) $line = 1;
+                if ($line > 6) $line = 6;
+                $debug['matched_gate'] = $gate;
+                $debug['matched_line'] = $line;
+                $debug['anchors'] = $anchors;
+                return [$gate, $line, $debug];
+            }
+        }
+        // else continue with next gate
+    }
+
+    // fallback: no match
+    $debug['error'] = 'no_gate_matched';
+    return [null, null, $debug];
+}
+
+/**
+ * Diagnostic routine — compare computed gate/line for every planet in the provided array.
+ * $planets is the planets array structure you pasted earlier.
+ * $applyShift default false (set true if you know you were using +30 previously).
+ */
+public function debugPlanetsGateLines(array $planets, bool $applyShift = false): string {
+    $out = "";
+    foreach ($planets as $idx => $p) {
+        $name = $p['name'];
+        $lng  = floatval($p['lng']);
+        // pass body name; for nodes use "True Node" or "South Node" as appropriate
+        $body = $name;
+        list($gate, $line, $debug) = $this->computeGateLine($lng, $body, $applyShift);
+        $out .= sprintf(
+            "%s (abs: %.6f) => Gate: %s, Line: %s\nDebug: %s\n\n",
+            $name,
+            $lng,
+            ($gate === null ? 'NULL' : $gate),
+            ($line === null ? 'NULL' : $line),
+            json_encode($debug)
+        );
+    }
+    return nl2br($out);
+}
+/** Map full sign name to abbreviation used in hex_wheel */
+private function zodiacToAbbreviation($zodiac) {
+    $zodiacMap = [
+        'Aries' => 'Ari','Taurus' => 'Tau','Gemini' => 'Gem','Cancer' => 'Can',
+        'Leo' => 'Leo','Virgo' => 'Vir','Libra' => 'Lib','Scorpio' => 'Sco',
+        'Sagittarius' => 'Sag','Capricorn' => 'Cap','Aquarius' => 'Aqu','Pisces' => 'Pis'
+    ];
+    return $zodiacMap[$zodiac] ?? null;
+}
+
+/*end debugging*/
+// helper: normalize to [0,360)
+private function normalizeLon(float $lon): float {
+    $lon = fmod($lon, 360.0);
+    if ($lon < 0) $lon += 360.0;
+    return $lon;
+}
+
+// helper: parse a hex_wheel item like array(1 => 0.1236, "Pis") or [0.1236, "Pis"]
+private function parseHexItem($item) {
+    $degree = null; $sign = null;
+    if (!is_array($item)) return [null, null];
+    foreach ($item as $v) {
+        if ($degree === null && (is_float($v) || is_int($v) || (is_string($v) && is_numeric($v)))) {
+            $degree = floatval($v);
+            continue;
+        }
+        if ($sign === null && is_string($v)) {
+            $sign = $v;
+        }
+    }
+    return [$degree, $sign];
+}
+
+/**
+ * Returns [gateNumber, lineNumber] or [null, null].
+ * - $longitude: absolute degrees (can be >360 or negative)
+ * - $body: used to decide node inversion ("Earth","True Node","South Node" invert by +180)
+ */
+public function getGateAndLineFromLongitude_v3(float $longitude, string $body = "Sun") {
+    // normalize
+    $lon = $this->normalizeLon($longitude);
+
+    // NOTE: remove any unexplained +30 shift unless you confirmed you need it.
+    // If you previously used $longitude += 30, test results both with and without it.
+    // $lon += 30; $lon = $this->normalizeLon($lon);
+
+    // If Earth/Node semantics: opposite point
+    if ($body === "Earth" || $body === "True Node" || $body === "South Node") {
+        $lon = $this->normalizeLon($lon + 180.0);
+    }
+
+    // sign name and abbreviation
+    $signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+    $signIndex = intval(floor($lon / 30.0)) % 12;
+    $signName = $signs[$signIndex];
+    $signAbbr = $this->zodiacToAbbreviation($signName);
+
+    // relative degree within sign: 0 .. <30
+    $relative = $lon - (floor($lon / 30.0) * 30.0);
+    if ($relative < 0) $relative += 30.0;
+    if ($relative >= 30.0) $relative = 29.9999999;
+
+    // Walk hex_wheel and test gates that belong to this sign
+    $hex_wheel = hex_wheel;
+    foreach ($hex_wheel as $gate => $signData) {
+        // find if gate belongs to target sign
+        $belongs = false;
+        $degrees = [];
+        foreach ($signData as $item) {
+            list($d, $s) = $this->parseHexItem($item);
+            if ($s !== null && $s === $signAbbr) $belongs = true;
+            if ($d !== null) $degrees[] = floatval($d);
+        }
+        if (!$belongs) continue;
+        if (empty($degrees)) continue;
+
+        // make monotonic sequence (handle wrap: values like 28,29,0,1 -> convert 0,1 to 30..)
+        $first = $degrees[0];
+        $ext = [];
+        $prev = null;
+        foreach ($degrees as $d) {
+            $val = $d;
+            // if this value is less than previous, assume wrap inside sign -> add 30
+            if ($prev !== null && $val < $prev - 1e-9) {
+                // treat as wrapped
+                $val += 30.0;
+            }
+            $ext[] = $val;
+            $prev = $val;
+        }
+        // append end boundary as first + 30 (end of gate span)
+        $extBound = $ext;
+        $extBound[] = $ext[0] + 30.0;
+
+        // Map relative to same scale:
+        $relExt = $relative;
+        // if relative is less than ext[0] but ext[0] indicates a later start (>rel), bring relative into wrapped domain
+        if ($relExt + 1e-9 < $ext[0]) $relExt += 30.0;
+
+        // find interval
+        for ($i = 0; $i < count($ext); $i++) {
+            $start = $extBound[$i];
+            $end   = $extBound[$i+1];
+            if ($relExt + 1e-9 >= $start && $relExt < $end - 1e-9) {
+                $line = $i + 1; // 1..6
+                if ($line < 1) $line = 1;
+                if ($line > 6) $line = 6;
+                return [$gate, $line];
+            }
+        }
+        // try next gate
+    }
+
+    // No gate matched — helpful debug output
+    error_log("HD debug: no_gate_matched for input={$longitude}, normalized={$lon}, sign={$signName}, signAbbr={$signAbbr}, relative={$relative}");
+    // extra debug: dump gate candidates (optional)
+    foreach ($hex_wheel as $gate => $signData) {
+        // print gates for this sign to error_log to inspect anchors
+        foreach ($signData as $itm) {
+            list($d,$s) = $this->parseHexItem($itm);
+            if ($s === $signAbbr) {
+                error_log("HD debug gate {$gate} anchors: " . json_encode($signData));
+                break;
+            }
+        }
+    }
+
+    return [null, null];
+}
+
+
+/*debugging*/
+
+
+
+
+/*end debugging*/
+
+
     function gpt_getGateAndLineFromLongitude($longitude, $body, $flag = "p") {
         $hex_wheel = hex_wheel;
     

@@ -35,6 +35,10 @@ class People extends Entity{
         public $analogue;
         public $tribe;
         public $a_tribe;
+        public $wavespell;
+        public $kin_seal;
+        public $kin_tone;
+        public $kin_number;
 
         public $dst_number;
         public $lp_number;
@@ -115,9 +119,10 @@ class People extends Entity{
                     $this->analogue=$combined->analogue;   
                     $this->tribe=$combined->tribe;
                     $this->a_tribe=$combined->a_tribe;
-                    
-                  
-                    
+                    $this->wavespell=$combined->wavespell;
+                    $this->kin_seal=$combined->kin_seal;
+                    $this->kin_tone=$combined->kin_tone;
+                    $this->kin_number=$combined->kin_number;
                     break;
                         
                         

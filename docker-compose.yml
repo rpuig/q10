@@ -1,69 +1,19 @@
+# docker-compose.base.yml
+
 services:
-  # PostgreSQL service
   my-postgres:
     image: postgres:17
-    container_name: my-postgres
-    environment:
-      POSTGRES_USER: neo
-      POSTGRES_PASSWORD: neo
-      POSTGRES_DB: xgroups
-    ports:
-      - "1543:5432"
-    volumes:
-      - ./data/pg_admindata:/var/lib/postgresql/data
-    networks:
-      - mynetwork
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: my-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    volumes:
-      - ./data/pg-admin/pgadmin-data:/var/lib/pgadmin  
-    ports:
-      - "8888:80"
     depends_on:
       - my-postgres
-    networks:
-      - mynetwork
-    
-  # Apache + PHP service
+
   web:
-    build:
-      context: .
-      dockerfile: php-dockerfile
-    image: my-php-web:latest  
-    container_name: my-php-apache
-    volumes:
-      - /var/www/html/q.local/:/var/www/html/q.local/      
-      - /etc/apache2/sites-enabled/q.local.conf:/etc/apache2/sites-enabled/q.local.conf
-      - /etc/ssl/localcerts:/etc/ssl/localcerts
-      - /users/ephe2/:/users/ephe2/
-      - ./custom.ini:/usr/local/etc/php/conf.d/my-custom.ini
-      - ./docker/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
-    ports:
-      - "8080:80" 
-      - "443:443"
+    image: my-php-web:latest
     depends_on:
       - my-postgres
-    command: 
-      bash -c "a2enmod rewrite && a2enmod ssl && apache2-foreground"
-    networks:
-      mynetwork:
-        ipv4_address: 192.168.100.10
-
-
-
-volumes:
-  pg_data:
-  pgadmin_data:
 
 networks:
   mynetwork:
     driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.100.0/24

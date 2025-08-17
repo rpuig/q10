@@ -63,13 +63,14 @@ class MatchController extends BaseController
 			$userID = $this->session->get('userid');
 			$new=$this->user->checkIfNew($userID) ;
 		
-		if (!$new){
+	//	if ($new){
 
 			//user is new 
 		$this->matchhWithAll();   //change to a cron logic in  future  update
 		$new=$this->user->setNonfNew($userID) ;
 		
-		}
+	//	}
+
 		//Updates the db match table and the variable BestMatches  
 		//$this->matchhWithAll();  
 
@@ -199,29 +200,17 @@ class MatchController extends BaseController
 						//Do match
 						if($prefMatch)
 						{
-						//Do cn math
+						
 						$pMatch= new pMatch($person1,$person2 );
 						
-						$cn_day_master_score= $pMatch->do_cn_match("day");
+					
+					
 
-						$my_castle_score= $pMatch->do_my_match("my_simple");
-
-						$my__score= $my_castle_score;	 
-
-						//$cn_full_score=$pMatch->do_cn_match("full");
-						$cn_score=$cn_day_master_score;
-
-						//Do my math
-					/* 	$pMatch= new pMatch($person1,$person2 ,'my');
-						$my_castle_score=$pMatch->do_my_match();
-						$my__score=$my_castle_score;	 */					
+									
 						}
 						else
 						//no sex preferences match 
-						continue;
-
-
-						
+						continue;					
 
 						$matchID=$person1['userid'].'_'.$person2['userid'];
 
@@ -230,12 +219,10 @@ class MatchController extends BaseController
 						'usera_id' =>$person1['userid'],
 						'userb_id' => $person2['userid'],
 						'matchid' => $matchID,
-						'score_cn' => $cn_score,	
-						'score_my' => $my__score,	
+						
 						'score_zd'=> $zd__score,	
-						'score_hd'=> $hd__score,	
-						'score_num'=>$num__score,
-						'score_total'=>$num__score+$hd__score+$zd__score+$my__score+$cn_score
+					
+						'score_total'=>$hd__score+$zd__score
 
 						];
 						//save the data to the table
@@ -367,7 +354,7 @@ class MatchController extends BaseController
 	public function hd($row)
 	{
 		$natal= $this->zd->get_zd_profile();
-	$natal88= $this->zd->get_zd_profile_ds();
+		$natal88= $this->zd->get_zd_profile_ds();
 		$this->hd= new Hd($natal,$natal88);
 		
 	}

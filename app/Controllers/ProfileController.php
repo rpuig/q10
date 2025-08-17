@@ -350,7 +350,7 @@ public function updateAllProfile()
 				'surname' => 'permit_empty|min_length[2]|max_length[20]', // Non-empty field
 				'city' => 'permit_empty|min_length[2]|max_length[20]', // Non-empty field
 				'birthdate' => 'valid_date[d/m/Y]',
-   			'birthtime' => 'regex_match[/^([01]\d|2[0-3]):([0-5]\d)$/]',
+   				'birthtime' => 'regex_match[/^([01]\d|2[0-3]):([0-5]\d)$/]',
 				'profilepicture' => 'max_size[profilepicture,2048]|mime_in[profilepicture,image/jpg,image/jpeg,image/png]',
 				'aboutme' => 'min_length[20]|max_length[200]'];
 			// Run validation
@@ -390,9 +390,9 @@ public function updateAllProfile()
 				$btime = $this->request->getPost('birthtime');
 				$unknowntime = $this->request->getPost('unknown_time');
 				$aboutme = $this->request->getPost('aboutme');
-				$timezone_txt = !empty($this->request->getPost('timezone')) 
-                ? $this->request->getPost('timezone') 
-                : $this->request->getPost('timezone_txt');
+				$timezone_txt = $this->request->getPost('timezone_txt');
+
+				
 				$city = $this->request->getPost('city');
 				$birthcountry = $this->request->getPost('birthcountry');
 				$lookingfor= $this->request->getPost('lookingfor');
@@ -440,7 +440,7 @@ public function updateAllProfile()
 				$this->uploadProfilePicture();
 			
 				// Further actions after validation
-			$this->user->setAsNew( $this->request->getPost('userid'));
+				$this->user->setAsNew( $this->request->getPost('userid'));
 				
 			} 
 			

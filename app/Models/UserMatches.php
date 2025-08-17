@@ -2,12 +2,12 @@
 
 namespace App\Models;
 use CodeIgniter\Model;
-use App\Models\BaseModel;
+	use App\Models\BaseModel;
 use App\Controllers\Utils\QueryLogger;
 
 class UserMatches extends BaseModel
 {
-  protected $DBGroup          = 'default';
+  protected $DBGroup         	= 'default';
 	protected $table            = 'usermatches';
 	protected $primaryKey       = 'matchid';
 	protected $useAutoIncrement = true; 

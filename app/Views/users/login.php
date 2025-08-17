@@ -37,7 +37,7 @@
                         <label class="form-label">Password</label>
                         <div class="input-group input-group-flat">
 
-                            <?= form_password(['name' => 'password', 'class' => 'form-control', 'placeholder' => 'Enter password']) ?>
+                            <?= form_password(['name' => 'password', 'class' => 'form-control', 'placeholder' => 'Enter password','value'=>'dddddd']) ?>
                             <span class="input-group-text">
                                 <a id="passwordToggle" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
                                     <!-- Download SVG icon from http://tabler-icons.io/i/eye -->

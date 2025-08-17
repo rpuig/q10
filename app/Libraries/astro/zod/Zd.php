@@ -399,9 +399,6 @@ private function set_zd_result_display($natal_aspects){
 
     $this->zd_display=$export_.$export_2;
 
-
-
-
 	}
 private function convertLngToLong($lng) {
     $signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"];

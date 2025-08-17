@@ -15,43 +15,10 @@ class UserAstro extends BaseModel
 	protected $useSoftDeletes   = false;
 	protected $protectFields    = true;protected $allowedFields = [
     'userid',
-    'hs_hour',
-    'eb_hour',
-    'hs_day',
-    'eb_day',
-    'hs_month',
-    'eb_month',
-    'hs_year',
-    'eb_year',
-    'eb_hour_eng',
-    'eb_day_eng',
-    'eb_month_eng',
-    'eb_year_eng',
-    'season',
-    'element',
-    'kin_tone',
-    'kin_seal',
-    'kin_number',
-    'guide_seal',
-    'guide_tone',
-    'analogue_seal',
-    'analogue_tone',
-    'antipode_seal',
-    'antipode_tone',
-    'occult_seal',
-    'occult_tone',
-    'tribe',
-    'a_tribe',
     'sun',
     'moon',
     'ascendant'
 ];
-
-
-	
-
- 
-
 
 	// Dates
 	protected $useTimestamps = false;
@@ -86,46 +53,12 @@ class UserAstro extends BaseModel
 
 
 
-public function updateAstro($userId,$cn_data,$my_data,$zd_data){
+public function updateAstro($userId,$zd_data){
 
 	$data=[];
 
 	$data['userid']=$userId;
 	//var_dump($zd_data);
-	$data['hs_hour']=$cn_data->HS_Hour;
-	$data['eb_hour']=$cn_data->EB_Hour;
-	$data['eb_hour_eng']=$cn_data->EB_Hour_eng;
-	
-	$data['hs_day']=$cn_data->HS_Day;
-	$data['eb_day']=$cn_data->EB_Day;
-	$data['eb_day_eng']=$cn_data->EB_Day_eng;
-
-	$data['hs_month']=$cn_data->HS_Month;
-	$data['eb_month']=$cn_data->EB_Month;
-	$data['eb_month_eng']=$cn_data->EB_Month_eng;
-
-	$data['hs_year']=$cn_data->HS_Year;
-	$data['eb_year']=$cn_data->EB_Year;
-	$data['eb_year_eng']=$cn_data->EB_Year_eng;
-
-
-	$data['season']=$cn_data->Season;
-	$data['element']=$cn_data->element_prof;
-
-	$data['kin_seal']=$my_data->kin_seal;
-	$data['kin_tone']=$my_data->kin_tone;
-	$data['kin_number']=$my_data->kin_number;
-
-	$data['guide_seal']=$my_data->guide_seal;
-	$data['guide_tone']=$my_data->guide_tone;
-	$data['analogue_seal']=$my_data->analogue_seal;
-	$data['analogue_tone']=$my_data->analogue_tone;
-	$data['antipode_seal']=$my_data->antipode_seal;
-	$data['antipode_tone']=$my_data->antipode_tone;
-	$data['occult_seal']=$my_data->occult_seal;
-	$data['occult_tone']=$my_data->occult_tone;
-	$data['tribe']=$my_data->tribe;
-	$data['a_tribe']=$my_data->a_tribe;
 
 	
 

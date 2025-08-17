@@ -32,3 +32,15 @@ function swe_get_planet_name($ipl) {}
 function swe_julday($year, $month, $day, $hour, $gregflag) {}
 function swe_houses($tjd_ut, $geolat, $geolon, $hsys) {}
 function swe_set_ephe_path($path) {}
+/**
+ * @param float $tjd
+ * @return float
+ */
+function swe_deltat(double $tjd): double {}
+
+/**
+ * @param float $tjd
+ * @param int $ephe_flat
+ * @return array
+ */
+function swe_deltat_ex(double $tjd, int $ephe_flat): array {}

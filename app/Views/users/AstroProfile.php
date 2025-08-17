@@ -11,61 +11,33 @@
             </div>
             <div class="card-body">
                 <div class="accordion" id="profileAccordion">
-                    <!-- CN Profile Section -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingCn">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCn" aria-expanded="true" aria-controls="collapseCn">
-                                Cn Profile
-                            </button>
-                        </h2>
-                        <div id="collapseCn" class="accordion-collapse collapse show" aria-labelledby="headingCn" data-bs-parent="#profileAccordion">
-                            <div class="accordion-body">
-                                <?= $cnProfile ?>
-                            </div>
-                        </div>
-                    </div>
+                 
 
                     <!-- ZD Profile Section -->
-                    <div class="accordion-item">
+                    <div class="accordion-item ">
                         <h2 class="accordion-header" id="headingZd">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseZd" aria-expanded="false" aria-controls="collapseZd">
+                            <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseZd" aria-expanded="false" aria-controls="collapseZd">
                                 Zd Profile
                             </button>
                         </h2>
-                        <div id="collapseZd" class="accordion-collapse collapse" aria-labelledby="headingZd" data-bs-parent="#profileAccordion">
+                        <div id="collapseZd" class="accordion-collapse " aria-labelledby="headingZd" data-bs-parent="#profileAccordion">
                             <div class="accordion-body">
                                 <?= $zdProfile ?>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- HD Profile Section -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingHd">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHd" aria-expanded="false" aria-controls="collapseHd">
+                  
+                            <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseHd" aria-expanded="false" aria-controls="collapseHd">
                                 Hd Profile
                             </button>
                         </h2>
-                        <div id="collapseHd" class="accordion-collapse collapse" aria-labelledby="headingHd" data-bs-parent="#profileAccordion">
+                        <div id="collapseHd" class="accordion-collapse " aria-labelledby="headingHd" data-bs-parent="#profileAccordion">
                             <div class="accordion-body">
                                 <?= $hdProfile  ?>
                             </div>
                         </div>
                     </div>
 
-                    <!-- My Profile Section -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingMy">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMy" aria-expanded="false" aria-controls="collapseMy">
-                                My Profile
-                            </button>
-                        </h2>
-                        <div id="collapseMy" class="accordion-collapse collapse" aria-labelledby="headingMy" data-bs-parent="#profileAccordion">
-                            <div class="accordion-body">
-                                <?= $myProfile ?>
-                            </div>
-                        </div>
-                    </div>
+            
                 </div>
             </div>
         </div>

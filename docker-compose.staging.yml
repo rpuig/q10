@@ -1,11 +1,11 @@
 
-# docker-compose.prod.yml
+# docker-compose.staging.yml
 services:
   postgres:
     image: postgres:17
-    container_name: q-local-postgres-prod
+    container_name: q-local-postgres-staging
     env_file:
-      - .env.prod
+      - .env.staging
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -20,9 +20,9 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: q-local-pgadmin-prod
+    container_name: q-local-pgadmin-staging
     env_file:
-      - .env.prod
+      - .env.staging
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
@@ -38,16 +38,16 @@ services:
     
   web:
     build: .
-    container_name: q-local-web-prod
+    container_name: q-local-web-staging
     env_file:
-      - .env.prod
+      - .env.staging
       - .env  # CodeIgniter env file
     volumes:
       - .:/var/www/html/q.local/
-      - ./config/apache/q.local.prod.conf:/etc/apache2/sites-available/q.local.conf:ro
-      - ./config/apache/q.local.prod.conf:/etc/apache2/sites-enabled/q.local.conf:ro
+      - ./config/apache/q.local.staging.conf:/etc/apache2/sites-available/q.local.conf:ro
+      - ./config/apache/q.local.staging.conf:/etc/apache2/sites-enabled/q.local.conf:ro
       - ./config/ssl:/etc/ssl/localcerts:ro
-      - ./config/php/custom.prod.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+      - ./config/php/custom.staging.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     ports:
       - "80:80" 
       - "443:443"

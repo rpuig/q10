@@ -25,8 +25,13 @@ class AstroController extends BaseController
 
     protected $hd;
 
-    public function __construct()
-    {  parent::__construct();
+    public function __construct() { 
+        
+        var_dump("Debug test"); // Add this line
+
+
+
+    parent::__construct();
         $this->userBirth = new UserBirth();
         $this->user = new User();
         $this->userAstro = new UserAstro();
@@ -44,8 +49,7 @@ class AstroController extends BaseController
         if($row['birthdate']!='null'&&$row['birthtime']!='null' && $row['sex']!='null')
                     {
 
-                    $this->cn($row);
-                    $this->my($row);
+                  
                     $this->zd($row);        
                     $this->hd($row);
                 
@@ -57,13 +61,12 @@ class AstroController extends BaseController
                     $this->user->setNonfNew($userID);//set user as not new anymore
                      }
 
-                     $this->updateAstroData($userID ,$this->cn,$this->my,$this->zd);
+                     $this->updateAstroData($userID ,$this->zd);
                     
                 
                     
                    // $this->userBirth = new UserBirth();
-                    $data['cnProfile']=$this->get_cn();
-                    $data['myProfile']=$this->get_my();
+               
                     $data['zdProfile']=$this->get_zd(); 
                     $data['hdProfile']=$this->get_hd();
 
@@ -87,9 +90,9 @@ class AstroController extends BaseController
 		
 	}
 
-    public function updateAstroData($userID,$cn,$my,$zd){
+    public function updateAstroData($userID,$zd){
 
-        $this->userAstro->updateAstro( $userID,$cn->get_cn_profile(),$my->get_my_profile(),$zd->get_zd_profile());
+        $this->userAstro->updateAstro( $userID,$zd->get_zd_profile());
 
         
 
@@ -97,27 +100,7 @@ class AstroController extends BaseController
 
 
 
-    private function cn($row)
-	{
-        $this->cn= new Cn($row);               
-	}
-
-    public function get_cn()
-	{
-         return  $this->cn->get_cn_result_display();        
-	}
-  
-
-    public function my($row)
-	{
-       $this->my= new My($row);
-		
-	}
-    public function get_my()
-	{
-        return  $this->my->get_my_result_display();        
-	}
-
+ 
 
     public function zd($row)
 	{

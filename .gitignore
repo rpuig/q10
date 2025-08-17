@@ -1,5 +1,11 @@
 # CodeIgniter
 .env
+.env.*
+!.env.example
+
+# Session files
+writable/session/*
+!writable/session/.gitkeep
 
 # Docker
 .env.docker
@@ -9,6 +15,17 @@ docker-compose.yml
 data/postgres/*
 data/pgadmin/*
 !data/.gitkeep
-
+data/mysql/*
+docker/data/*
+ 
 # Logs
 *.log
+xdebug.log
+
+# Git
+.git/objects/*
+
+# SSL files
+docker/config/ssl/*.key
+docker/config/ssl/*.crt
+docker/config/ssl/*.pem

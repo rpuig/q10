@@ -58,7 +58,7 @@ $(document).ready(function() {
 					$('#country_display').val(suggestion.country);
 					$('#birthCountry').val(suggestion.country);
 					$('#suggestions').empty();
-
+					$('#timezone_txt').val(suggestion.timezone?.name || 'none');
 					$('#longitude').val(suggestion.lon);
 					$('#latitude').val(suggestion.lat);
 
@@ -69,10 +69,20 @@ $(document).ready(function() {
 	});
 
 	// Prevent form submission if no valid selection
-	$('#yourForm').on('submit', function(event) {
-			if (!validSelection) {
+	$('#updateAllForm').on('submit', function(event) {
+
+				const tz  = ($('#timezone_txt').val() || '').trim();
+				const lat = ($('#latitude').val() || '').trim();
+				const lon = ($('#longitude').val() || '').trim();
+
+
+			 if (!validSelection || !tz || !lat || !lon) {
 					event.preventDefault();
 					alert("Please select a city from the suggestions.");
 			}
 	});
+
+	
+
+
 });

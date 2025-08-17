@@ -34,7 +34,7 @@ function render_menu_left($isLoggedIn) {
                 " . lang('App.menu_matches') . "
                 </a>
                 <div class='dropdown-menu'>
-                    <a class='dropdown-item' href='" . base_url('/matches') . "'>" . lang('App.menu_current') . "</a>
+                    <a class='dropdown-item' href='" . base_url('/current') . "'>" . lang('App.menu_current') . "</a>
                     <a class='dropdown-item' href='" . base_url('/conversations') . "'>" . lang('App.menu_conversations') . "</a>
                 </div>
             </li>";
