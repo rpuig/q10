@@ -121,6 +121,10 @@ $routes->group(
 // Redis test route
 $routes->get('redis-test', 'RedisTestController::index');
 
+// Kafka test routes
+$routes->get('kafka/produce', 'KafkaTestController::produce');
+$routes->get('kafka/consume', 'KafkaTestController::consume');
+
 
         
     
