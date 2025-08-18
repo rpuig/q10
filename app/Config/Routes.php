@@ -118,6 +118,8 @@ $routes->group(
         
         $routes->get('verify/(:alphanum)', 'UsersController::verify/$1');
 
+// Redis test route
+$routes->get('redis-test', 'RedisTestController::index');
 
 
         
