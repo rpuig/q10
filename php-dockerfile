@@ -39,15 +39,22 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug
 
-# Enable Apache modules
-RUN a2enmod rewrite ssl headers
+# Enable Apache modules (including proxy modules needed for WSS proxying)
+RUN a2enmod rewrite ssl headers proxy proxy_wstunnel proxy_http
 
 # Set working directory
 WORKDIR /var/www/html/q.local/
 
 # Copy application files
 COPY . /var/www/html/q.local/
+# backup
+RUN mkdir -p docker/config/ssl/backup \
+  && cp docker/config/ssl/q.local.* docker/config/ssl/backup/ || true
 
+# TLS certificates should be provided by the host (for example: use mkcert)
+# and mounted into /etc/ssl/localcerts inside the container. Generating certs
+# during image build is avoided to keep the image deterministic and to allow
+# using a local CA trusted by the host/browser.
 # Install PHP dependencies if composer.json exists
 RUN if [ -f composer.json ]; then \
       composer install --no-dev --optimize-autoloader; \

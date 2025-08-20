@@ -17,6 +17,7 @@ data/pgadmin/*
 !data/.gitkeep
 data/mysql/*
 docker/data/*
+
  
 # Logs
 *.log
@@ -29,3 +30,4 @@ xdebug.log
 docker/config/ssl/*.key
 docker/config/ssl/*.crt
 docker/config/ssl/*.pem
+docker/config/backup/*
